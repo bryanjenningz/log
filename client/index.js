@@ -3,18 +3,23 @@ import {render} from 'react-dom'
 import range from 'lodash/range'
 const socket = io()
 
+
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
       headers: range(10).map(entry => 'header'),
-      rows: range(10).map(row => range(10).map(entry => 'hey')),
+      rows: range(10).map(row => range(10).map(entry => '')),
       editing: null, // null or [x, y]
     }
   }
 
+  componentWillMount() {
+    socket.on('receiveRows', rows => this.setState({rows}))
+  }
+
   edit(x, y) {
-    this.setState({editing: [x, y]}, () => this.editingOtherEntry = false)
+    this.setState({editing: [x, y]}, () => socket.emit('sendRows', this.state.rows))
   }
 
   cancelEdit() {
@@ -55,7 +60,7 @@ class App extends Component {
                           defaultValue={entry}
                           handleUpdate={(value) => this.updateEntry(i, j, value)}
                           handleBlur={() => this.cancelEdit()} />
-                      : entry
+                      : entry || <br />
                     }
                   </td>
                 ))}
