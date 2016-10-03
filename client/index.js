@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import {render} from 'react-dom'
 import range from 'lodash/range'
-
+const socket = io()
 
 class App extends Component {
   constructor(props) {

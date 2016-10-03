@@ -18,8 +18,10 @@
     "webpack": "^1.13.2"
   },
   "dependencies": {
+    "express": "^4.14.0",
     "lodash": "^4.16.2",
     "react": "^15.3.1",
-    "react-dom": "^15.3.1"
+    "react-dom": "^15.3.1",
+    "socket.io": "^1.4.8"
   }
 }
