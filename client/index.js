@@ -88,7 +88,10 @@ class InputEntry extends Component {
           className="form-control"
           defaultValue={this.props.defaultValue}
           ref="input"
-          onBlur={this.props.handleBlur}
+          onBlur={() => {
+            this.props.handleUpdate(this.refs.input.value)
+            this.props.handleBlur()
+          }}
           style={{height: '100%'}} />
       </form>
     )
