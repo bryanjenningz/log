@@ -40,30 +40,37 @@ class App extends Component {
         <table className="table table-striped table-hover table-bordered">
           <thead>
             <tr>
-              {this.state.headers.map((header, i) => (<th key={i}>{header}</th>))}
+              {[<th className="col-xs-1"></th>]
+                .concat(this.state.headers.map((header, i) =>
+                  <th key={i} className="col-xs-1" style={{background: '#aaa'}}>
+                    {String.fromCharCode(i + 'A'.charCodeAt(0))}
+                  </th>
+                ))}
             </tr>
           </thead>
           <tbody>
             {this.state.rows.map((row, j) => (
               <tr key={j}>
-                {row.map((entry, i) => (
-                  <td
-                    key={i}
-                    onMouseUp={() => this.edit(i, j)}
-                    className="col-xs-1"
-                    style={Object.assign(
-                      {position: 'relative'},
-                      this.currentlyEditing(i, j) ? {padding: 0} : {}
-                    )}>
-                    {this.currentlyEditing(i, j)
-                      ? <InputEntry
-                          defaultValue={entry}
-                          handleUpdate={(value) => this.updateEntry(i, j, value)}
-                          handleBlur={() => this.cancelEdit()} />
-                      : entry || <br />
-                    }
-                  </td>
-                ))}
+                {[<td className="col-xs-1" style={{background: '#aaa', fontWeight: 'bold'}}>
+                    {j + 1}
+                  </td>].concat(row.map((entry, i) =>
+                    <td
+                      key={i}
+                      onMouseUp={() => this.edit(i, j)}
+                      className="col-xs-1"
+                      style={Object.assign(
+                        {position: 'relative'},
+                        this.currentlyEditing(i, j) ? {padding: 0} : {}
+                      )}>
+                      {this.currentlyEditing(i, j)
+                        ? <InputEntry
+                            defaultValue={entry}
+                            handleUpdate={(value) => this.updateEntry(i, j, value)}
+                            handleBlur={() => this.cancelEdit()} />
+                        : entry || <br />
+                      }
+                    </td>))
+                }
               </tr>
             ))}
           </tbody>
