@@ -46,9 +46,15 @@ class App extends Component {
                     key={i}
                     onMouseUp={() => this.edit(i, j)}
                     className="col-xs-1"
-                    style={Object.assign({position: 'relative'}, this.currentlyEditing(i, j) ? {padding: 0} : {})}>
+                    style={Object.assign(
+                      {position: 'relative'},
+                      this.currentlyEditing(i, j) ? {padding: 0} : {}
+                    )}>
                     {this.currentlyEditing(i, j)
-                      ? <InputEntry handleUpdate={(value) => this.updateEntry(i, j, value)} handleBlur={() => this.cancelEdit()} />
+                      ? <InputEntry
+                          defaultValue={entry}
+                          handleUpdate={(value) => this.updateEntry(i, j, value)}
+                          handleBlur={() => this.cancelEdit()} />
                       : entry
                     }
                   </td>
@@ -70,9 +76,7 @@ class InputEntry extends Component {
 
   handleSubmit(e, value) {
     e.preventDefault()
-    if (value.trim()) {
-      this.props.handleUpdate(value.trim())
-    }
+    this.props.handleUpdate(value)
   }
 
   render() {
@@ -82,6 +86,7 @@ class InputEntry extends Component {
         style={{position: 'absolute', top: 0, bottom: 0}}>
         <input
           className="form-control"
+          defaultValue={this.props.defaultValue}
           ref="input"
           onBlur={this.props.handleBlur}
           style={{height: '100%'}} />
@@ -91,6 +96,7 @@ class InputEntry extends Component {
 }
 
 InputEntry.propTypes = {
+  defaultValue: PropTypes.string.isRequired,
   handleUpdate: PropTypes.func.isRequired,
   handleBlur: PropTypes.func.isRequired,
 }
