@@ -6,6 +6,7 @@ let io = require('socket.io')(server)
 app.use(express.static('../build-client'))
 
 let entryRows = null
+let usersById = {}
 
 io.on('connect', socket => {
   console.log('User connected:', socket.id)
@@ -14,8 +15,15 @@ io.on('connect', socket => {
     socket.emit('receiveRows', entryRows)
   }
 
+  socket.on('sendUser', user => {
+    usersById[socket.id] = user
+    socket.emit('receiveUsers', usersById)
+  })
+
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id)
+    delete usersById[socket.id]
+    socket.emit('receiveUsers', usersById)
   })
 
   socket.on('sendRows', rows => {
