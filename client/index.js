@@ -24,7 +24,7 @@ class App extends Component {
   }
 
   edit(x, y) {
-    this.setState({editing: [x, y]}, () => socket.emit('sendRows', this.state.rows))
+    this.setState({editing: [x, y]})
   }
 
   cancelEdit() {
@@ -36,7 +36,11 @@ class App extends Component {
   }
 
   updateEntry(x, y, value) {
-    this.setState({rows: this.state.rows.map((row, j) => row.map((entry, i) => i === x && j === y ? value : entry))})
+    this.setState({rows: this.state.rows.map((row, j) =>
+      row.map((entry, i) =>
+        i === x && j === y ? value : entry
+      )
+    )}, () => socket.emit('sendRows', this.state.rows))
   }
 
   render() {
