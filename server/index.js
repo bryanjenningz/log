@@ -7,6 +7,7 @@ app.use(express.static('../build-client'))
 
 let entryRows = null
 let usersById = {}
+let userEntriesById = {}
 
 io.on('connect', socket => {
   console.log('User connected:', socket.id)
@@ -18,6 +19,15 @@ io.on('connect', socket => {
   socket.on('sendUser', user => {
     usersById[socket.id] = user
     io.emit('receiveUsers', usersById)
+  })
+
+  socket.on('sendUserEntry', userEntry => {
+    userEntriesById[socket.id] = userEntry
+    io.emit('receiveUserEntries', Object.keys(userEntriesById).map(id => ({
+      name: usersById[id].name,
+      x: userEntry[0],
+      y: userEntry[1],
+    })))
   })
 
   socket.on('disconnect', () => {

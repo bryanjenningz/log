@@ -13,6 +13,7 @@ class App extends Component {
       editing: null, // null or [x: Int, y: Int]
       username: null, // null or String
       users: null, // null or [{name: String}]
+      userEntries: {}, // String -> String (i.e. `${x},${y}` -> name)
     }
   }
 
@@ -21,10 +22,16 @@ class App extends Component {
     socket.on('receiveUsers', usersById => {
       this.setState({users: Object.keys(usersById).map(id => usersById[id])})
     })
+    socket.on('receiveUserEntries', userEntries => {
+      this.setState({userEntries: userEntries.reduce((entriesByCoords, entry) => {
+        entriesByCoords[`${entry.x},${entry.y}`] = entry.name
+        return entriesByCoords
+      }, {})})
+    })
   }
 
   edit(x, y) {
-    this.setState({editing: [x, y]})
+    this.setState({editing: [x, y]}, () => socket.emit('sendUserEntry', this.state.editing))
   }
 
   cancelEdit() {
@@ -84,7 +91,12 @@ class App extends Component {
                                 defaultValue={entry}
                                 handleUpdate={(value) => this.updateEntry(i, j, value)}
                                 handleBlur={() => this.cancelEdit()} />
-                            : entry || <br />
+                            : entry
+                            ? <span>
+                                {this.state.userEntries[`${i},${j}`] ? <UserInputLabel name={this.state.userEntries[`${i},${j}`]} /> : null}
+                                {entry}
+                              </span>
+                            : <br />
                           }
                         </td>))
                       }
@@ -195,5 +207,21 @@ UserPrompt.propTypes = {
   setUsername: PropTypes.func.isRequired
 }
 
+
+const userInputLabelStyles = {
+  fontSize: 8,
+  position: 'absolute',
+  background: '#5affff',
+  left: 0,
+  top: 0,
+  padding: '0 2px',
+}
+
+const UserInputLabel = (props) =>
+  <div style={userInputLabelStyles}>{props.name}</div>
+
+UserInputLabel.propTypes = {
+  name: PropTypes.string.isRequired
+}
 
 render(<App />, document.querySelector('#root'))
