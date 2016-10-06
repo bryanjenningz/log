@@ -17,13 +17,13 @@ io.on('connect', socket => {
 
   socket.on('sendUser', user => {
     usersById[socket.id] = user
-    socket.emit('receiveUsers', usersById)
+    io.emit('receiveUsers', usersById)
   })
 
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id)
     delete usersById[socket.id]
-    socket.emit('receiveUsers', usersById)
+    io.emit('receiveUsers', usersById)
   })
 
   socket.on('sendRows', rows => {
